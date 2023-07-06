@@ -1,6 +1,12 @@
 logging:
   level:
+    # Application debug logging
     '[com.example.bank]': DEBUG
+
+    # Log Spring Data SQL queries and parameters
+    #'[org.hibernate.SQL]': DEBUG
+    #'[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
+
     # Disable deprecated WARNING logging
     '[org.springframework.core.LocalVariableTableParameterNameDiscoverer]': OFF
 

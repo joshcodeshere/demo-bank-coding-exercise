@@ -14,10 +14,13 @@ import com.example.bank.exception.AccountNotFoundException;
 import com.example.bank.exception.CustomerNotFoundException;
 import com.example.bank.repository.AccountRepository;
 
+import jakarta.transaction.Transactional;
+
 /**
  * Business logic for accounts
  */
 @Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
     @Autowired

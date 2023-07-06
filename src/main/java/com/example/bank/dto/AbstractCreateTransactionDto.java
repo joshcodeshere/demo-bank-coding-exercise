@@ -24,6 +24,7 @@ public abstract class AbstractCreateTransactionDto {
     @NotNull(message = "Account ID required")
     private Long accountId;
 
+    @Min(value = 1L, message = "Transaction amount must be greater that zero")
     @Digits(integer = Integer.MAX_VALUE, fraction = 2, message = "Invalid change fraction")
     @NotNull(message = "Amount required")
     private BigDecimal amount;

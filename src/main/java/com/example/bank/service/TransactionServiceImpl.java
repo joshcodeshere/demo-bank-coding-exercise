@@ -24,10 +24,13 @@ import com.example.bank.exception.TransactionSourceCannotEqualDestination;
 import com.example.bank.exception.TransferMustBeGreaterThanZeroException;
 import com.example.bank.repository.TransactionRepository;
 
+import jakarta.transaction.Transactional;
+
 /**
  * Business logic for customers.
  */
 @Service
+@Transactional
 public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
@@ -92,7 +95,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction deposit = new Transaction();
         deposit.setAccount(account);
-        deposit.setAmount(createDepositDto.getAmount().abs());
+        deposit.setAmount(createDepositDto.getAmount());
 
         Optional<Transaction> currentTransaction = repository.findCurrentAccountIdTransaction(account.getId());
         if (currentTransaction.isPresent()) {
@@ -137,7 +140,9 @@ public class TransactionServiceImpl implements TransactionService {
         if (currentSourceTransaction.isPresent()) {
 
             sourceAccountBalanceAfterTransfer = currentSourceTransaction.get().getCurrentBalance()
-                    .subtract(createTransferDto.getAmount().abs());
+                    .subtract(createTransferDto.getAmount());
+
+            currentSourceTransaction.get().setIsCurrent(false);
 
             if (sourceAccountBalanceAfterTransfer.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new TransactionHasInsufficientFundsException();
@@ -147,34 +152,42 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionHasInsufficientFundsException();
         }
 
-        // Build the source account transaction
-        Transaction sourceTransaction = new Transaction();
-        sourceTransaction.setAccount(sourceAccount);
-        sourceTransaction.setAmount(createTransferDto.getAmount().abs().multiply(new BigDecimal(-1)));
-        sourceTransaction.setCurrentBalance(sourceAccountBalanceAfterTransfer);
-        sourceTransaction.setCustomer(sourceAccount.getCustomer());
-        sourceTransaction.setDescription(createTransferDto.getDescription());
-        sourceTransaction.setIsCurrent(true);
-        sourceTransaction.setTransferType(TransactionTransferType.SOURCE);
-        sourceTransaction.setType(TransactionType.TRANSFER);
-
-        // Build the destination account transaction
-        Transaction destinationTransaction = new Transaction();
-        destinationTransaction.setAccount(destinationAccount);
-        destinationTransaction.setAmount(createTransferDto.getAmount().abs());
-        destinationTransaction
-                .setCurrentBalance(destinationTransaction.getCurrentBalance().add(createTransferDto.getAmount().abs()));
-        destinationTransaction.setCustomer(destinationAccount.getCustomer());
-        destinationTransaction.setDescription(createTransferDto.getDescription());
-        destinationTransaction.setIsCurrent(true);
-        sourceTransaction.setTransferType(TransactionTransferType.DESTINATION);
-        destinationTransaction.setType(TransactionType.TRANSFER);
+        // Disable the destination account
+        Optional<Transaction> currentDestinationTransaction = repository
+                .findCurrentAccountIdTransaction(destinationAccount.getId());
+        if (currentDestinationTransaction.isPresent()) {
+            currentDestinationTransaction.get().setIsCurrent(false);
+        }
 
         List<Transaction> transactions = new ArrayList<>(2);
-        transactions.add(destinationTransaction);
-        transactions.add(sourceTransaction);
 
-        return repository.saveAll(transactions);
+        // Build the source account transaction
+        Transaction newSourceTransaction = new Transaction();
+        newSourceTransaction.setAccount(sourceAccount);
+        newSourceTransaction.setAmount(createTransferDto.getAmount().multiply(new BigDecimal(-1)));
+        newSourceTransaction.setCurrentBalance(sourceAccountBalanceAfterTransfer);
+        newSourceTransaction.setCustomer(sourceAccount.getCustomer());
+        newSourceTransaction.setDescription(createTransferDto.getDescription());
+        newSourceTransaction.setIsCurrent(true);
+        newSourceTransaction.setTransferType(TransactionTransferType.SOURCE);
+        newSourceTransaction.setType(TransactionType.TRANSFER);
+        transactions.add(repository.save(newSourceTransaction));
+
+        // Build the destination account transaction
+        Transaction newDestinationTransaction = new Transaction();
+        newDestinationTransaction.setAccount(destinationAccount);
+        newDestinationTransaction.setAmount(createTransferDto.getAmount());
+        newDestinationTransaction
+                .setCurrentBalance(
+                        currentDestinationTransaction.get().getCurrentBalance().add(createTransferDto.getAmount()));
+        newDestinationTransaction.setCustomer(destinationAccount.getCustomer());
+        newDestinationTransaction.setDescription(createTransferDto.getDescription());
+        newDestinationTransaction.setIsCurrent(true);
+        newDestinationTransaction.setTransferType(TransactionTransferType.DESTINATION);
+        newDestinationTransaction.setType(TransactionType.TRANSFER);
+        transactions.add(repository.save(newDestinationTransaction));
+
+        return transactions;
     }
 
     @Override
@@ -196,11 +209,13 @@ public class TransactionServiceImpl implements TransactionService {
         if (currentTransaction.isPresent()) {
 
             accountBalanceAfterWithdrawl = currentTransaction.get().getCurrentBalance()
-                    .subtract(createWithdrawlDto.getAmount().abs());
+                    .subtract(createWithdrawlDto.getAmount());
 
             if (accountBalanceAfterWithdrawl.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new TransactionHasInsufficientFundsException();
             }
+
+            currentTransaction.get().setIsCurrent(false);
 
         } else {
             throw new TransactionHasInsufficientFundsException();
@@ -209,7 +224,7 @@ public class TransactionServiceImpl implements TransactionService {
         // Build the account withdrawl transaction
         Transaction withdrawl = new Transaction();
         withdrawl.setAccount(account);
-        withdrawl.setAmount(createWithdrawlDto.getAmount().abs().multiply(new BigDecimal(-1)));
+        withdrawl.setAmount(createWithdrawlDto.getAmount().multiply(new BigDecimal(-1)));
         withdrawl.setCurrentBalance(accountBalanceAfterWithdrawl);
         withdrawl.setCustomer(account.getCustomer());
         withdrawl.setDescription(createWithdrawlDto.getDescription());

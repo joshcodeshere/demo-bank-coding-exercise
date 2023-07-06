@@ -12,10 +12,13 @@ import com.example.bank.exception.CustomerNotFoundException;
 import com.example.bank.exception.CustomerExistsWithSsnException;
 import com.example.bank.repository.CustomerRepository;
 
+import jakarta.transaction.Transactional;
+
 /**
  * Business logic for customers.
  */
 @Service
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
