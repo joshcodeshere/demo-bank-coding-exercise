@@ -16,6 +16,8 @@ Recommended to use [Visual Studio Code](https://code.visualstudio.com) IDE. Once
 
 Under [/src/main/java/com/example/bank/](/src/main/java/com/example/bank/) there are the following packages:
 
+* **aop:**
+  * Example of handling exception logging with Aspect Oriented Programming.
 * **domain:**
   * Contains JPA models.
 * **dto:** 
@@ -31,6 +33,8 @@ Under [/src/main/java/com/example/bank/](/src/main/java/com/example/bank/) there
   * The location for business logic.
 * **validation:**
   * Contains a [sample custom DTO validation](/src/main/java/com/example/bank/validation/ValidSsnImpl.java) annotation to ensure [SSN is valid](https://en.wikipedia.org/wiki/Social_Security_number#Valid_SSNs), this can be tested on the HTTP POST to `/api/customers` endpoint (i.e SSN of 123006789 is not valid)
+* **web:**
+  * REST API controllers, the [GlobalExceptionHandling](/src/main/java/com/example/bank/web/exception/GlobalExceptionHandling.java) for handling exceptions to clients, and HATEOAS resource classes.
 
 
 ## Embedded H2 Database Engine

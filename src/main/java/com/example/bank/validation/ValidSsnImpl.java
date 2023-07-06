@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * Referenced from https://en.wikipedia.org/wiki/Social_Security_number "Valid
  * SSNs".
  */
-@Slf4j
 public class ValidSsnImpl implements
         ConstraintValidator<ValidSsn, Long> {
 
@@ -53,7 +52,6 @@ public class ValidSsnImpl implements
     }
 
     private void updateMessage(String message, ConstraintValidatorContext context) {
-        log.debug("SSN validation failed: " + message);
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
     }

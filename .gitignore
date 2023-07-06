@@ -45,3 +45,4 @@ test/resources/projects/maven/salut/testGradle
 test-temp
 build
 .vscode/settings.json
+.vscode/launch.json
