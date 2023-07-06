@@ -1,0 +1,14 @@
+logging:
+  level:
+    '[com.example.bank]': DEBUG
+    # Disable deprecated WARNING logging
+    '[org.springframework.core.LocalVariableTableParameterNameDiscoverer]': OFF
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+  h2:
+    console:
+      enabled: true
+  jpa:
+    open-in-view: false
