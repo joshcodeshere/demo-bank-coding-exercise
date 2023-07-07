@@ -8,7 +8,7 @@ Domain objects (customers, accounts, and transfers) have minimal data fields and
 
 ## Running Application
 
-Install [gradle](https://gradle.org/install/) and avigate to project root directory.
+Install [gradle](https://gradle.org/install/) and navigate to project root directory.
 
 For Windows systems run `gradlew.bat bootRun`.
 
