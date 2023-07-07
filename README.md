@@ -1,6 +1,6 @@
 # Demo Bank Coding Exercise
 
-[Spring Boot 3](https://spring.io/blog/2022/05/24/preparing-for-spring-boot-3-0) application that requires Java 17.
+[Spring Boot 3](https://spring.io/blog/2022/05/24/preparing-for-spring-boot-3-0) application that simulates a simple bank.
 
 > Spring Boot 3.0 will require Java 17
 
