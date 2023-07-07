@@ -8,9 +8,16 @@ Domain objects (customers, accounts, and transfers) have minimal data fields and
 
 ## Running Application
 
-Recommended to use [Visual Studio Code](https://code.visualstudio.com) IDE. Once installed follow [Spring Boot in Visual Studio Code](https://code.visualstudio.com/docs/java/java-spring-boot) to get up and running.
+Install [gradle](https://gradle.org/install/) and avigate to project root directory.
 
-[Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced) is recommended for working/viewing `.md` files, such as this document.
+For Windows systems run `gradlew.bat bootRun`.
+
+For Unix based systems run `gradlew bootRun`.
+
+## IDE
+[Visual Studio Code](https://code.visualstudio.com). 
+
+Once installed follow [Spring Boot in Visual Studio Code](https://code.visualstudio.com/docs/java/java-spring-boot) to get up and running.
 
 ## Project Organization
 
