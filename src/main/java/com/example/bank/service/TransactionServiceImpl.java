@@ -177,9 +177,14 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction newDestinationTransaction = new Transaction();
         newDestinationTransaction.setAccount(destinationAccount);
         newDestinationTransaction.setAmount(createTransferDto.getAmount());
-        newDestinationTransaction
-                .setCurrentBalance(
-                        currentDestinationTransaction.get().getCurrentBalance().add(createTransferDto.getAmount()));
+
+        if (currentDestinationTransaction.isPresent()) {
+            newDestinationTransaction
+                    .setCurrentBalance(
+                            currentDestinationTransaction.get().getCurrentBalance().add(createTransferDto.getAmount()));
+        } else {
+            newDestinationTransaction.setCurrentBalance(createTransferDto.getAmount());
+        }
         newDestinationTransaction.setCustomer(destinationAccount.getCustomer());
         newDestinationTransaction.setDescription(createTransferDto.getDescription());
         newDestinationTransaction.setIsCurrent(true);
